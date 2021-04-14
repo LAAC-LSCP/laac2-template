@@ -28,8 +28,8 @@ confidential_url = "git@gin.g-node.org:/{}/{}-confidential.git".format(el1000_or
 
 siblings = {
     'private': {'url': private_url, 'wanted': 'include=*' },
-    'el1000': {'url': el1000_url, 'wanted': '(include=*) and (exclude=**/confidential/*) and (exclude=recordings/*) and (exclude=**/private/*)'},
-    'confidential': {'url': confidential_url, 'wanted': 'include=**/confidential/*'}
+    'el1000': {'url': el1000_url, 'wanted': '(metadata=EL1000=*) and (exclude=**/confidential/*)'},
+    'confidential': {'url': confidential_url, 'wanted': '(metadata=EL1000=*) and (include=**/confidential/*)'}
 }
 
 origin = None
