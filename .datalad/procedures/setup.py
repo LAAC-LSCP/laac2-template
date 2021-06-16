@@ -14,11 +14,19 @@ parser.add_argument('path', help = 'path')
 parser.add_argument('--confidential', help = 'setup access to confidential data', action = 'store_true')
 parser.add_argument('--private', help = 'setup access to private data', action = 'store_true')
 
+args = parser.parse_args()
+
 confidential = args.confidential or args.private
 private = args.private
 
+ds = require_dataset(
+    sys.argv[1],
+    check_installed = True,
+    purpose = 'configure'
+)
+
 origin_url = datalad.api.siblings(name = 'origin', dataset = ds)[0]['url']
-dataset_name = os.path.basename(origin_url)
+dataset_name = os.path.splitext(os.path.basename(origin_url))[0]
 private_organization = 'LAAC-LSCP'
 el1000_organization = 'EL1000'
 
@@ -36,6 +44,9 @@ origin = None
 for sibling in siblings.keys():
     if siblings[sibling]['url'] == origin_url:
         origin = sibling
+
+if origin is None:
+    raise Exception('failed to determine where this repository has been cloned from.')
 
 if origin == 'confidential':
     raise Exception('please install the dataset from {}'.format(el1000_url))
@@ -67,9 +78,9 @@ for sibling in siblings.keys():
     datalad.api.siblings(
         name = name,
         dataset = ds,
-        action = 'configure'
-        annex_wanted = siblings[origin]['wanted'],
-        annex_required = siblings[origin]['wanted']
+        action = 'configure',
+        annex_wanted = siblings[sibling]['wanted'],
+        annex_required = siblings[sibling]['wanted']
     )
 
 available_siblings = {sibling['name'] for sibling in datalad.api.siblings(dataset = ds)}
